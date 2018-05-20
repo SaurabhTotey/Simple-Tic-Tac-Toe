@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 //The empty character in the board
 const char EMPTY = ' ';
@@ -42,6 +43,15 @@ void printBoard(char board[9]) {
 }
 
 /**
+ * Clears the console
+ */
+void clearScreen() {
+    for (int j = 0; j < 100; j++) {
+        printf("%c", '\n');
+    }
+}
+
+/**
  * Entry point of the program
  */
 int main() {
@@ -49,6 +59,22 @@ int main() {
     for (int i = 0; i < 9; i++) {
         board[i] = EMPTY;
     }
+    char winner = EMPTY;
+    for (int i = 0; winner == EMPTY; i++) {
+        clearScreen();
+        printBoard(board);
+        int row;
+        int column;
+        char playerChar = i % 2 == 0? X : O;
+        printf("Player %c, which column will you move in? ", playerChar);
+        scanf("%d", &column);
+        printf("Player %c, which row will you move in? ", playerChar);
+        scanf("%d", &row);
+        board[(row - 1) * 3 + (column - 1)] = playerChar;
+        winner = winnerOf(board);
+    }
+    clearScreen();
     printBoard(board);
+    printf("Player %c is the winner!", winner);
     return 0;
 }
