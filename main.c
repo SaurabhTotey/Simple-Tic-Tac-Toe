@@ -87,10 +87,11 @@ int main() {
                 SDL_Quit();
                 return 0;
             } else if (type == SDL_MOUSEBUTTONDOWN) {
-                int x = event.button.x / 300;
-                int y = event.button.y / 300;
-                board[y * 3 + x] = turnCount % 2 == 0? X : O;
-                turnCount++;
+                int location = (event.button.y / 300) * 3 + (event.button.x / 300);
+                if (board[location] == EMPTY && winnerOf(board) == EMPTY) {
+                    board[location] = turnCount % 2 == 0? X : O;
+                    turnCount++;
+                }
             }
         }
         SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
