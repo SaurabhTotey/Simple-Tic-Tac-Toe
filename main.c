@@ -37,13 +37,19 @@ char winnerOf(char board[]) {
 /**
  * Prints the given board
  */
-void drawBoard(char board[9], SDL_Renderer* renderer) {
+void drawBoard(const char board[9], SDL_Renderer* renderer, SDL_Texture* xTexture, SDL_Texture* oTexture) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     for (int i = 0; i < 2; i++) {
         SDL_Rect vertical = { 300 + 300 * i - 25, 50, 50, 800 };
         SDL_RenderFillRect(renderer, &vertical);
         SDL_Rect horizontal = { 50, 300 + 300 * i - 25, 800, 50 };
         SDL_RenderFillRect(renderer, &horizontal);
+    }
+    for (int i = 0; i < 9; i++) {
+        if (board[i] != EMPTY) {
+            SDL_Rect r = {100 * i % 3, 100 * i / 3, 300, 300};
+            SDL_RenderCopy(renderer, board[i] == X? xTexture : oTexture, NULL, &r);
+        }
     }
 }
 
@@ -58,22 +64,33 @@ int main() {
     SDL_Window* window = SDL_CreateWindow("Tic Tac Toe!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_RESIZABLE);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
     TTF_Font* font = TTF_OpenFont("OpenSans-Regular.ttf", 50);
+    SDL_Color black = {0, 0, 0, 1};
+    SDL_Texture* xTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderGlyph_Blended(font, X, black));
+    SDL_Texture* oTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderGlyph_Blended(font, O, black));
+
     SDL_RenderSetLogicalSize(renderer, 900, 900);
-    drawBoard(board, renderer);
+    int turnCount = 0;
     while (true) {
         SDL_Event event;
         while (SDL_PollEvent(&event) != 0) {
             Uint32 type = event.type;
             if (type == SDL_QUIT) {
+                SDL_DestroyTexture(xTexture);
+                SDL_DestroyTexture(oTexture);
                 SDL_DestroyRenderer(renderer);
                 SDL_DestroyWindow(window);
                 SDL_Quit();
                 return 0;
+            } else if (type == SDL_MOUSEBUTTONDOWN) {
+                int x = event.button.x / 300;
+                int y = event.button.y / 300;
+                board[y * 3 + x] = turnCount % 2 == 0? X : O;
+                turnCount++;
             }
         }
         SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
         SDL_RenderClear(renderer);
-        drawBoard(board, renderer);
+        drawBoard(board, renderer, xTexture, oTexture);
         SDL_RenderPresent(renderer);
     }
 }
