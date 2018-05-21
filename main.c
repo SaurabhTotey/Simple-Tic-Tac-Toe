@@ -60,7 +60,7 @@ int main() {
         board[i] = EMPTY;
     }
     char winner = EMPTY;
-    for (int i = 0; winner == EMPTY; i++) {
+    for (int i = 0; winner == EMPTY && i < 9; i++) {
         clearScreen();
         printBoard(board);
         char playerChar = i % 2 == 0? X : O;
@@ -82,6 +82,10 @@ int main() {
     }
     clearScreen();
     printBoard(board);
-    printf("Player %c is the winner!", winner);
+    if (winner != EMPTY) {
+        printf("Player %c is the winner!", winner);
+    } else {
+        printf("Nobody wins... ¯\\_(ツ)_/¯");
+    }
     return 0;
 }
