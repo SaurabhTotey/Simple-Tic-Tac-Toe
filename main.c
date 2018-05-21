@@ -63,14 +63,21 @@ int main() {
     for (int i = 0; winner == EMPTY; i++) {
         clearScreen();
         printBoard(board);
-        int row;
-        int column;
         char playerChar = i % 2 == 0? X : O;
-        printf("Player %c, which column will you move in? ", playerChar);
-        scanf("%d", &column);
-        printf("Player %c, which row will you move in? ", playerChar);
-        scanf("%d", &row);
-        board[(row - 1) * 3 + (column - 1)] = playerChar;
+        int locationToMove;
+        do {
+            int row;
+            int column;
+            printf("Player %c, which column will you move in? ", playerChar);
+            scanf("%d", &column);
+            printf("Player %c, which row will you move in? Enter -1 if you wish to re-select column. ", playerChar);
+            scanf("%d", &row);
+            locationToMove = (row - 1) * 3 + (column - 1);
+            if (row < 1 || row > 3 || column < 1 || column > 3) {
+                locationToMove = -1;
+            }
+        } while(locationToMove < 0 || locationToMove >= 9 || board[locationToMove] != EMPTY);
+        board[locationToMove] = playerChar;
         winner = winnerOf(board);
     }
     clearScreen();
