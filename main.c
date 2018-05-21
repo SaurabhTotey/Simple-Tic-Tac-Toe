@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL_video.h>
+#include <SDL_system.h>
+#include <stdbool.h>
+#include <SDL_events.h>
 
 //The empty character in the board
 const char EMPTY = ' ';
@@ -32,25 +36,14 @@ char winnerOf(char board[]) {
 /**
  * Prints the given board
  */
-void printBoard(char board[9]) {
-    for (int i = 0; i < 9; i++) {
-        printf("%c", board[i]);
-        printf("%c", ' ');
-        if ((i + 1) % 3 == 0) {
-            printf("%c", '\n');
-        }
+void drawBoard(char board[9], SDL_Renderer* renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    for (int i = 0; i < 2; i++) {
+        SDL_Rect vertical = { 300 + 300 * i - 25, 50, 50, 800 };
+        SDL_RenderFillRect(renderer, &vertical);
+        SDL_Rect horizontal = { 50, 300 + 300 * i - 25, 800, 50 };
+        SDL_RenderFillRect(renderer, &horizontal);
     }
-}
-
-/**
- * Clears the console
- */
-void clearScreen() {
-    #if defined(_WIN32) || defined(__CYGWIN__)
-        system("cls");
-    #else
-        system("clear");
-    #endif
 }
 
 /**
@@ -61,34 +54,23 @@ int main() {
     for (int i = 0; i < 9; i++) {
         board[i] = EMPTY;
     }
-    char winner = EMPTY;
-    for (int i = 0; winner == EMPTY && i < 9; i++) {
-        clearScreen();
-        printBoard(board);
-        char playerChar = i % 2 == 0? X : O;
-        int locationToMove;
-        do {
-            int row;
-            int column;
-            printf("Player %c, which column will you move in? ", playerChar);
-            scanf("%d", &column);
-            printf("Player %c, which row will you move in? Enter -1 if you wish to re-select column. ", playerChar);
-            scanf("%d", &row);
-            locationToMove = (row - 1) * 3 + (column - 1);
-            if (row < 1 || row > 3 || column < 1 || column > 3) {
-                locationToMove = -1;
+    SDL_Window* window = SDL_CreateWindow("Tic Tac Toe!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_RESIZABLE);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
+    SDL_RenderSetLogicalSize(renderer, 900, 900);
+    drawBoard(board, renderer);
+    while (true) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event) != 0) {
+            Uint32 type = event.type;
+            if (type == SDL_QUIT) {
+                SDL_DestroyRenderer(renderer);
+                SDL_DestroyWindow(window);
+                return 0;
             }
-        } while(locationToMove < 0 || locationToMove >= 9 || board[locationToMove] != EMPTY);
-        board[locationToMove] = playerChar;
-        winner = winnerOf(board);
+        }
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+        SDL_RenderClear(renderer);
+        drawBoard(board, renderer);
+        SDL_RenderPresent(renderer);
     }
-    clearScreen();
-    printBoard(board);
-    if (winner != EMPTY) {
-        printf("Player %c is the winner!", winner);
-    } else {
-        printf("Nobody wins... ¯\\_(ツ)_/¯");
-    }
-    getchar();getchar();
-    return 0;
 }
