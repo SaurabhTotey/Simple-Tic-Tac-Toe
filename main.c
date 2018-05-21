@@ -4,6 +4,7 @@
 #include <SDL_system.h>
 #include <stdbool.h>
 #include <SDL_events.h>
+#include <SDL_ttf.h>
 
 //The empty character in the board
 const char EMPTY = ' ';
@@ -56,6 +57,7 @@ int main() {
     }
     SDL_Window* window = SDL_CreateWindow("Tic Tac Toe!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_RESIZABLE);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
+    TTF_Font* font = TTF_OpenFont("OpenSans-Regular.ttf", 50);
     SDL_RenderSetLogicalSize(renderer, 900, 900);
     drawBoard(board, renderer);
     while (true) {
@@ -65,6 +67,7 @@ int main() {
             if (type == SDL_QUIT) {
                 SDL_DestroyRenderer(renderer);
                 SDL_DestroyWindow(window);
+                SDL_Quit();
                 return 0;
             }
         }
