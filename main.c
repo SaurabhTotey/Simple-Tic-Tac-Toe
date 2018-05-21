@@ -46,9 +46,11 @@ void printBoard(char board[9]) {
  * Clears the console
  */
 void clearScreen() {
-    for (int j = 0; j < 100; j++) {
-        printf("%c", '\n');
-    }
+    #if defined(_WIN32) || defined(__CYGWIN__)
+        system("cls");
+    #else
+        system("clear");
+    #endif
 }
 
 /**
@@ -87,5 +89,6 @@ int main() {
     } else {
         printf("Nobody wins... ¯\\_(ツ)_/¯");
     }
+    getchar();getchar();
     return 0;
 }
