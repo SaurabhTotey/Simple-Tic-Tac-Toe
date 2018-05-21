@@ -47,7 +47,7 @@ void drawBoard(const char board[9], SDL_Renderer* renderer, SDL_Texture* xTextur
     }
     for (int i = 0; i < 9; i++) {
         if (board[i] != EMPTY) {
-            SDL_Rect r = {100 * i % 3, 100 * i / 3, 300, 300};
+            SDL_Rect r = {300 * (i % 3), 300 * (i / 3), 300, 300};
             SDL_RenderCopy(renderer, board[i] == X? xTexture : oTexture, NULL, &r);
         }
     }
@@ -57,13 +57,18 @@ void drawBoard(const char board[9], SDL_Renderer* renderer, SDL_Texture* xTextur
  * Entry point of the program
  */
 int main() {
+    SDL_Init(SDL_INIT_EVERYTHING);
+    TTF_Init();
+
     char board[9];
     for (int i = 0; i < 9; i++) {
         board[i] = EMPTY;
     }
+
     SDL_Window* window = SDL_CreateWindow("Tic Tac Toe!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_RESIZABLE);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
-    TTF_Font* font = TTF_OpenFont("OpenSans-Regular.ttf", 50);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    TTF_Font* font = TTF_OpenFont("/home/saurabhtotey/Documents/Programming/Workspace/TicTacToe/OpenSans-Regular.ttf", 1500);
     SDL_Color black = {0, 0, 0, 1};
     SDL_Texture* xTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderGlyph_Blended(font, X, black));
     SDL_Texture* oTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderGlyph_Blended(font, O, black));
