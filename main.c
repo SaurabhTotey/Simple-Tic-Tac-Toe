@@ -14,16 +14,16 @@ const char O = 'O';
 char winnerOf(char board[]) {
     for (int i = 0; i < 3; i++) {
         //Checks rows
-        if (board[3 * i] == board[3 * i + 1] && board[3 * i + 1] == board[3 * i + 2]) {
+        if (board[3 * i] != EMPTY && board[3 * i] == board[3 * i + 1] && board[3 * i + 1] == board[3 * i + 2]) {
             return board[3 * i];
         }
         //Checks columns
-        if (board[i] == board[i + 3] && board[i + 3] == board[i + 3 * 2]) {
+        if (board[i] != EMPTY && board[i] == board[i + 3] && board[i + 3] == board[i + 3 * 2]) {
             return board[i];
         }
     }
     //Checks diagonals
-    if (board[4] == board[0] && board[4] == board[8] || board[4] == board[2] && board[4] == board[6]) {
+    if (board[4] != EMPTY && board[4] == board[0] && board[4] == board[8] || board[4] == board[2] && board[4] == board[6]) {
         return board[4];
     }
     return EMPTY;
